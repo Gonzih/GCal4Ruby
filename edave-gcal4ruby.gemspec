@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "CHANGELOG",
-    "README",
+    "README.md",
     "lib/gcal4ruby.rb",
     "lib/gcal4ruby/calendar.rb",
     "lib/gcal4ruby/event.rb",
