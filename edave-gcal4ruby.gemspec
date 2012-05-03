@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2011-01-11}
   s.email = ["mike@seabourneconsulting.com", "email2ants@gmail.com", "ui-design@vestaldesign.com"]
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
     "CHANGELOG",
