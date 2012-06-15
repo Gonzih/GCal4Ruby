@@ -91,7 +91,7 @@ module GCal4Ruby
           when 'DAILY'
             @frequency['daily'] = true
           when 'WEEKLY'
-            @frequency['weekly'] = args[:byday].split(',')
+            @frequency['weekly'] = args[:byday].try(:split, ',')
           when 'MONTHLY'
             if args[:byday]
               @frequency['monthly'] = args[:byday]
