@@ -90,8 +90,10 @@ module GCal4Ruby
           case args[:freq]
           when 'DAILY'
             @frequency['daily'] = true
+            @frequency[:interval] = args[:interval].to_i
           when 'WEEKLY'
             @frequency['weekly'] = args[:byday].try(:split, ',')
+            @frequency[:interval] = args[:interval].to_i
           when 'MONTHLY'
             if args[:byday]
               @frequency['monthly'] = args[:byday]
@@ -99,8 +101,10 @@ module GCal4Ruby
             else
               @frequency['monthly'] = args[:bymonthday].to_i
             end
+            @frequency[:interval] = args[:interval].to_i
           when 'YEARLY'
             @frequency['yearly'] = args[:byyearday].to_i
+            @frequency[:interval] = args[:interval].to_i
           end
         elsif key == 'INTERVAL'
           @frequency[:interval] = value.to_i unless value.nil? || value.empty?
