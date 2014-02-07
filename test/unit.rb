@@ -39,7 +39,7 @@ def service_test
   else
     failed
   end
-  
+
   puts "2. Calendar List"
   cals = @service.calendars
   if cals
@@ -54,7 +54,7 @@ end
 
 def calendar_test
   puts "---Starting Calendar Test---"
-  
+
   puts "1. Create Calendar"
   cal = Calendar.new(@service)
   cal.title = "test calendar"+Time.now.to_s
@@ -64,7 +64,7 @@ def calendar_test
   else
     failed
   end
-  
+
   puts "2. Edit Calendar"
   cal.title = "renamed title"
   if cal.save
@@ -72,7 +72,7 @@ def calendar_test
   else
     puts "Test 2 Failed"
   end
-  
+
   puts "3. Find Calendar by ID"
   c = Calendar.find(@service, {:id => cal.id})
   if c.title == cal.title
@@ -80,7 +80,7 @@ def calendar_test
   else
     failed "#{c.title} not equal to #{cal.title}"
   end
-  
+
   puts "4. Delete Calendar"
   if cal.delete and not cal.exists?
     successful
@@ -91,7 +91,7 @@ end
 
 def event_test
   puts "---Starting Event Test---"
-  
+
   puts "1. Create Event"
   event = Event.new(@service)
   event.calendar = @service.calendars[0]
@@ -104,7 +104,7 @@ def event_test
   else
     failed
   end
-  
+
   puts "2. Edit Event"
   event.title = "Edited title"
   if event.save
@@ -112,12 +112,12 @@ def event_test
   else
     failed
   end
-  
+
   puts "3. Reload Event"
   if event.reload
     successful
   end
-  
+
   puts "4. Find Event by id"
   e = Event.find(@service, {:id => event.id})
   if e.title == event.title
@@ -125,10 +125,10 @@ def event_test
   else
     failed "Found event doesn't match existing event"
   end
-  
+
   puts "5. Delete Event"
   if event.delete
-    successful 
+    successful
   else
     failed
   end
@@ -136,38 +136,38 @@ end
 
 def event_recurrence_test
   puts "---Starting Event Recurrence Test---"
-  
+
   @first_start = Time.now
   @first_end = Time.now+3600
   @first_freq = {'weekly' => ['TU']}
   @second_start = Time.now+86000
   @second_end = Time.now+89600
   @second_freq = {'weekly' => ['SA']}
-  
+
   puts "1. Create Recurring Event"
   event = Event.new(@service)
   event.calendar = @service.calendars[0]
   event.title = "Test Recurring Event"
   event.content = "Test event content"
   event.recurrence = Recurrence.new({:start_time => @first_start, :end_time => @first_end, :frequency => @first_freq})
-  if event.save 
+  if event.save
     successful event.to_xml
   else
     failed("recurrence = "+event.recurrence.to_s)
   end
-  
+
   puts "2. Edit Recurrence"
   event.title = "Edited recurring title"
   event.recurrence = Recurrence.new({:start_time => @second_start, :end_time => @second_end, :frequency => @second_freq})
-  if event.save 
+  if event.save
     successful event.to_xml
   else
     failed
   end
-  
+
   puts "3. Delete Event"
   if event.delete
-    successful 
+    successful
   else
     failed
   end

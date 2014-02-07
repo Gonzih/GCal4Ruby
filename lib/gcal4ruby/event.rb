@@ -51,7 +51,7 @@ module GCal4Ruby
   #    event.recurrence.start_time = Time.parse("06/20/2009 at 4:30 PM")
   #    event.recurrence.end_time = Time.parse("06/20/2009 at 6:30 PM")
   #    event.recurrence.frequency = {"weekly" => ["SA"]}
-  #    event.save 
+  #    event.save
   #
   #8. Create an event with a 15 minute email reminder
   #    event = Event.new(service)
@@ -72,10 +72,10 @@ module GCal4Ruby
   #    event.attendees => {:name => "Kate", :email => "kate@gmail.com"}
   #    event.save
   #
-  #After an event object has been created or loaded, you can change any of the 
+  #After an event object has been created or loaded, you can change any of the
   #attributes like you would any other object.  Be sure to save the event to write changes
   #to the Google Calendar service.
-  
+
   class Event < GData4Ruby::GDataObject
     EVENT_QUERY_FEED = "http://www.google.com/calendar/feeds/default/private/full/"
     EVENT_XML = "<entry xmlns='http://www.w3.org/2005/Atom'
@@ -97,10 +97,10 @@ module GCal4Ruby
     STATUS = {:confirmed => "http://schemas.google.com/g/2005#event.confirmed",
               :tentative => "http://schemas.google.com/g/2005#event.tentative",
               :cancelled => "http://schemas.google.com/g/2005#event.canceled"}
-              
+
     TRANSPARENCY = {:free => "http://schemas.google.com/g/2005#event.transparent",
                     :busy => "http://schemas.google.com/g/2005#event.opaque"}
-    
+
     #The content for the event
     attr_accessor :content
     #The location of the event
@@ -110,14 +110,14 @@ module GCal4Ruby
     #A flag indicating the status of the event.  Values can be :confirmed, :tentative or :cancelled
     attr_accessor :status
     #Flag indicating whether it is an all day event
-    attr_reader :all_day    
+    attr_reader :all_day
     #An array of reminders. Each item in the array is a hash representing the event reminder.
     attr_reader :reminder
     #The date the event was last edited
     attr_reader :edited
     #Id of the parent calendar
     attr_reader :calendar_id
-    
+
     #Creates a new Event.  Accepts a valid Service object and optional attributes hash.
     def initialize(service, attributes = {})
       super(service, attributes)
@@ -131,7 +131,7 @@ module GCal4Ruby
         self.send("#{key}=", value)
       end
     end
-    
+
     #Sets the reminder options for the event.  Parameter must be an array of hashes containing a :minutes key with a value of 5 up to 40320 (4 weeks)
     #and a :method key of with a value of one the following:
     #alert:: causes an alert to appear when a user is viewing the calendar in a browser
@@ -139,20 +139,20 @@ module GCal4Ruby
     def reminder=(r)
       @reminder = r
     end
-    
+
     #Returns the current event's Recurrence information
     def recurrence
       @recurrence
     end
-    
+
     #Returns an array of the current attendees
     def attendees
       @attendees
     end
-    
+
     def all_day=(value)
       puts 'all_day value = '+value.to_s if service.debug
-      if value.is_a? String 
+      if value.is_a? String
         @all_day = true if value.downcase == 'true'
         @all_day = false if value.downcase == 'false'
       else
@@ -161,22 +161,22 @@ module GCal4Ruby
       puts 'after all_day value = '+@all_day.to_s if service.debug
       @all_day
     end
-    
-    #Accepts an array of email address/name pairs for attendees.  
+
+    #Accepts an array of email address/name pairs for attendees.
     #  [{:name => 'Mike Reich', :email => 'mike@seabourneconsulting.com'}]
     #The email address is requried, but the name is optional
     def attendees=(a)
-      raise ArgumentError, "Attendees must be an Array of email/name hash pairs" if not a.is_a?(Array) 
+      raise ArgumentError, "Attendees must be an Array of email/name hash pairs" if not a.is_a?(Array)
       @attendees = a
     end
-    
+
     #Sets the event's recurrence information to a Recurrence object.  Returns the recurrence if successful,
     #false otherwise
     def recurrence=(r)
       raise ArgumentError, 'Recurrence must be a Recurrence object' if not r.is_a?(Recurrence)
       @recurrence = r
     end
-    
+
     #Returns a duplicate of the current event as a new Event object
     def copy()
       e = Event.new(service)
@@ -184,53 +184,53 @@ module GCal4Ruby
       e.calendar = @calendar
       return e
     end
-    
+
     #Sets the start time of the Event.  Must be a Time object or a parsable string representation
     #of a time.
     def start_time=(str)
       raise ArgumentError, "Start Time must be either Time or String" if not str.is_a?String and not str.is_a?Time
       @start_time = if str.is_a?String
-        Time.parse(str)      
+        Time.parse(str)
       elsif str.is_a?Time
         str
       end
     end
-    
+
     #Sets the end time of the Event.  Must be a Time object or a parsable string representation
     #of a time.
     def end_time=(str)
       raise ArgumentError, "End Time must be either Time or String" if not str.is_a?String and not str.is_a?Time
       @end_time = if str.is_a?String
-        Time.parse(str)      
+        Time.parse(str)
       elsif str.is_a?Time
         str
       end
     end
-    
+
     #The event start time.  If a recurring event, the recurrence start time.
     def start_time
       return @start_time ? @start_time : @recurrence ? @recurrence.start_time : nil
     end
-    
+
     #The event end time.  If a recurring event, the recurrence end time.
     def end_time
       return @end_time ? @end_time : @recurrence ? @recurrence.end_time : nil
     end
 
-    
+
     #If the event does not exist on the Google Calendar service, save creates it.  Otherwise
     #updates the existing event data.  Returns true on success, false otherwise.
     def save
       raise CalendarNotEditable if not calendar.editable
       super
     end
-    
+
     #Creates a new event
     def create
       headers = { 'Content-Type' => 'application/atom+xml' }
       service.send_request(GData4Ruby::Request.new(:post, @parent_calendar.content_uri, to_xml, headers))
     end
-    
+
     #Returns an XML representation of the event.
     def to_xml()
       xml = REXML::Document.new(super)
@@ -242,7 +242,7 @@ module GCal4Ruby
             if not @recurrence
               puts 'all_day = '+@all_day.to_s if service.debug
               if @all_day
-                puts 'saving as all-day event' if service.debug 
+                puts 'saving as all-day event' if service.debug
               else
                 puts 'saving as timed event' if service.debug
               end
@@ -275,7 +275,7 @@ module GCal4Ruby
               set_reminder(w)
             end
         end
-      end        
+      end
       if not @attendees.empty?
         xml.root.elements.delete_all "gd:who"
         @attendees.each do |a|
@@ -284,19 +284,19 @@ module GCal4Ruby
       end
       xml.to_s
     end
-    
+
     #The event's parent calendar
-    def calendar 
+    def calendar
       @parent_calendar = Calendar.find(service, {:id => @calendar_id}) if not @parent_calendar and @calendar_id
       return @parent_calendar
     end
-    
+
     #Sets the event's calendar
     def calendar=(p)
       raise ArgumentError, 'Value must be a valid Calendar object' if not p.is_a? Calendar
       @parent_calendar = p
     end
-    
+
     #Loads the event info from an XML string.
     def load(string)
       super(string)
@@ -330,10 +330,10 @@ module GCal4Ruby
             if ele.attributes['rel'] == 'edit'
               @edit_feed = ele.attributes['href']
             end
-          when "who"        
+          when "who"
             @attendees << {:email => ele.attributes['email'], :name => ele.attributes['valueString'], :role => ele.attributes['rel'].gsub("http://schemas.google.com/g/2005#event.", ""), :status => ele.elements["gd:attendeeStatus"] ? ele.elements["gd:attendeeStatus"].attributes['value'].gsub("http://schemas.google.com/g/2005#event.", "") : ""}
           when "eventStatus"
-            @status =  ele.attributes["value"].gsub("http://schemas.google.com/g/2005#event.", "").to_sym 
+            @status =  ele.attributes["value"].gsub("http://schemas.google.com/g/2005#event.", "").to_sym
           when 'recurrence'
             @recurrence = Recurrence.new(ele.text)
           when "transparency"
@@ -341,10 +341,10 @@ module GCal4Ruby
                 when "http://schemas.google.com/g/2005#event.transparent" then :free
                 when "http://schemas.google.com/g/2005#event.opaque" then :busy
              end
-        end      
+        end
       end
     end
-    
+
     #Reloads the event data from the Google Calendar Service.  Returns true if successful,
     #false otherwise.
     def reload
@@ -355,11 +355,11 @@ module GCal4Ruby
       end
       return false
     end
-    
+
     #Finds an Event based on a text query or by an id.  Parameters are:
     #*service*::  A valid Service object to search.
     #*query*:: either a string containing a text query to search by, or a hash containing an +id+ key with an associated id to find, or a +query+ key containint a text query to search for, or a +title+ key containing a title to search.  All searches are case insensitive.
-    #*args*:: a hash containing optional additional query paramters to use.  Limit a search to a single calendar by passing a calendar object as {:calender => calendar} or the calendar id as {:calendar => calendar.id}.  See here[http://code.google.com/apis/calendar/data/2.0/developers_guide_protocol.html#RetrievingEvents] and here[http://code.google.com/apis/gdata/docs/2.0/reference.html#Queries] for a full list of possible values.  Example: 
+    #*args*:: a hash containing optional additional query paramters to use.  Limit a search to a single calendar by passing a calendar object as {:calender => calendar} or the calendar id as {:calendar => calendar.id}.  See here[http://code.google.com/apis/calendar/data/2.0/developers_guide_protocol.html#RetrievingEvents] and here[http://code.google.com/apis/gdata/docs/2.0/reference.html#Queries] for a full list of possible values.  Example:
     # {'max-results' => '100'}
     #If an ID is specified, a single instance of the event is returned if found, otherwise false.
     #If a query term or title text is specified, and array of matching results is returned, or an empty array if nothing
@@ -407,13 +407,13 @@ module GCal4Ruby
       end
       return false
     end
-    
+
     #Returns true if the event exists on the Google Calendar Service.
     def exists?
       return @exists
     end
-  
-    private     
+
+    private
     def set_reminder(ele)
       num = ele.elements.delete_all "gd:reminder"
       puts 'num = '+num.size.to_s if service.debug
@@ -422,7 +422,7 @@ module GCal4Ruby
           puts 'reminder added' if service.debug
           e = ele.add_element("gd:reminder")
           e.attributes['minutes'] = reminder[:minutes].to_s if reminder[:minutes]
-          if reminder[:method] 
+          if reminder[:method]
             e.attributes['method'] = reminder[:method]
           else
             e.attributes['method'] = 'email'
@@ -447,4 +447,3 @@ module GCal4Ruby
     end
   end
 end
-

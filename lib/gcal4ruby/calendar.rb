@@ -17,8 +17,8 @@
 #++
 require 'gdata4ruby/acl/access_rule'
 module GCal4Ruby
-  #The Calendar Class is the representation of a Google Calendar.  Each user account 
-  #can have multiple calendars.  You must have an authenticated Service object before 
+  #The Calendar Class is the representation of a Google Calendar.  Each user account
+  #can have multiple calendars.  You must have an authenticated Service object before
   #using the Calendar object.
   #=Usage
   #All usages assume a successfully authenticated Service.
@@ -38,14 +38,14 @@ module GCal4Ruby
   #5. Find all calendars containing a search term
   #    cal = Calendar.find(service, "Soccer Team")
   #
-  #After a calendar object has been created or loaded, you can change any of the 
+  #After a calendar object has been created or loaded, you can change any of the
   #attributes like you would any other object.  Be sure to save the calendar to write changes
   #to the Google Calendar service.
   class Calendar < GData4Ruby::GDataObject
     @@calendar_feed = "http://www.google.com/calendar/feeds/default/owncalendars/full/"
     @@calendar_query_feed = "http://www.google.com/calendar/feeds/default/calendars/"
-    @@calendar_xml = "<entry xmlns='http://www.w3.org/2005/Atom' 
-         xmlns:gd='http://schemas.google.com/g/2005' 
+    @@calendar_xml = "<entry xmlns='http://www.w3.org/2005/Atom'
+         xmlns:gd='http://schemas.google.com/g/2005'
          xmlns:gCal='http://schemas.google.com/gCal/2005'>
     <title type='text'></title>
     <summary type='text'></summary>
@@ -60,26 +60,26 @@ module GCal4Ruby
 
     #A short description of the calendar
     attr_accessor :summary
-    
+
     #Boolean value indicating the calendar visibility
     attr_accessor :hidden
-    
+
     #The calendar timezone[http://code.google.com/apis/calendar/docs/2.0/reference.html#gCaltimezone]
     attr_accessor :timezone
-    
+
     #The calendar color.  Must be one of these[http://code.google.com/apis/calendar/docs/2.0/reference.html#gCalcolor] values.
     attr_accessor :color
-    
+
     #The calendar geo location, if any
     attr_accessor :where
-    
+
     #A boolean value indicating whether the calendar appears by default when viewed online
     attr_accessor :selected
-    
-    #A flag indicating whether the calendar is editable by this account 
+
+    #A flag indicating whether the calendar is editable by this account
     attr_reader :editable
-    
-    #Accepts a Service object and an optional attributes hash for initialization.  Returns the new Calendar 
+
+    #Accepts a Service object and an optional attributes hash for initialization.  Returns the new Calendar
     #if successful, otherwise raises the InvalidService error.
     def initialize(service, attributes = {})
       super(service, attributes)
@@ -104,18 +104,18 @@ module GCal4Ruby
       @debug ||= false
       return true
     end
-    
-    #Returns true if the calendar exists on the Google Calendar system (i.e. was 
+
+    #Returns true if the calendar exists on the Google Calendar system (i.e. was
     #loaded or has been saved).  Otherwise returns false.
     def exists?
       return @exists
     end
-    
+
     #Returns true if the calendar is publically accessable, otherwise returns false.
     def public?
       return @public
     end
-    
+
     #Returns an array of Event objects corresponding to each event in the calendar.
     def events
       events = []
@@ -129,8 +129,8 @@ module GCal4Ruby
       end
       return events
     end
-    
-    
+
+
     #Saves the calendar.
     def save
       public = @public
@@ -147,23 +147,23 @@ module GCal4Ruby
       end
       reload
     end
-    
+
     #Set the calendar to public (p = true) or private (p = false).  Publically viewable
     #calendars can be accessed by anyone without having to log in to google calendar.  See
     #Calendar#to_iframe on how to display a public calendar in a webpage.
     def public=(p)
       @public = p
     end
-    
+
     #Creates a new instance of the object
     def create
       return service.send_request(GData4Ruby::Request.new(:post, @@calendar_feed, to_xml()))
     end
-    
+
     #Finds a Calendar based on a text query or by an id.  Parameters are:
     #*service*::  A valid Service object to search.
     #*query*:: either a string containing a text query to search by, or a hash containing an +id+ key with an associated id to find, or a +query+ key containint a text query to search for, or a +title+ key containing a title to search.
-    #*args*:: a hash containing optional additional query paramters to use.  See http://code.google.com/apis/gdata/docs/2.0/reference.html#Queries for a full list of possible values.  Example: 
+    #*args*:: a hash containing optional additional query paramters to use.  See http://code.google.com/apis/gdata/docs/2.0/reference.html#Queries for a full list of possible values.  Example:
     # {'max-results' => '100'}
     #If an ID is specified, a single instance of the calendar is returned if found, otherwise false.
     #If a query term or title text is specified, and array of matching results is returned, or an empty array if nothing
@@ -197,7 +197,7 @@ module GCal4Ruby
       end
       return false
     end
-    
+
     #Reloads the calendar objects information from the stored server version.  Returns true
     #if successful, otherwise returns false.  Any information not saved will be overwritten.
     def reload
@@ -209,7 +209,7 @@ module GCal4Ruby
         return false
       end
     end
-    
+
     #Returns the xml representation of the Calenar.
     def to_xml
       xml = REXML::Document.new(super)
@@ -229,7 +229,7 @@ module GCal4Ruby
       end
       xml.to_s
     end
-    
+
     #Loads the Calendar with returned data from Google Calendar feed.  Returns true if successful.
     def load(string)
       super(string)
@@ -258,19 +258,19 @@ module GCal4Ruby
           @editable = (ele.attributes["value"] == 'editor' or ele.attributes["value"] == 'owner' or ele.attributes["value"] == 'root')
         end
       end
-      
+
       if service.check_public
         log("Getting ACL Feed")
-        
+
         # If the ACL URI doesn't exist, then its definitely not public
         if (@acl_uri == nil)
           log("Not Public")
           @public = false
           return true
         end
-        
+
         #rescue error on shared calenar ACL list access
-        begin 
+        begin
           log("ACL URI: #{@acl_uri}")
           ret = service.send_request(GData4Ruby::Request.new(:get, @acl_uri))
         rescue Exception => e
@@ -293,7 +293,7 @@ module GCal4Ruby
       end
       return true
     end
-    
+
     #Helper function to return a formatted iframe embedded google calendar.  Parameters are:
     #1. *params*: a hash of parameters that affect the display of the embedded calendar.  Accepts any parameter that the google iframe recognizes.  Here are the most common:
     #   height:: the height of the embedded calendar in pixels
@@ -321,14 +321,14 @@ module GCal4Ruby
       params[:border] ||= "0"
       params.each{|key, value| params[key] = CGI::escape(value)}
       output = "#{params.to_a.collect{|a| a.join("=")}.join("&")}"
-      
+
       output += "&src=#{id}"
-      
-      "<iframe src='#{service.create_url("www.google.com/calendar/embed?"+output)}' style='#{params[:border]} px solid;' width='#{params[:width]}' height='#{params[:height]}' frameborder='#{params[:border]}' scrolling='no'></iframe>"  
+
+      "<iframe src='#{service.create_url("www.google.com/calendar/embed?"+output)}' style='#{params[:border]} px solid;' width='#{params[:width]}' height='#{params[:height]}' frameborder='#{params[:border]}' scrolling='no'></iframe>"
     end
-    
+
     #Helper function to return a specified calendar id as a formatted iframe embedded google calendar.  This function does not require loading the calendar information from the Google calendar
-    #service, but does require you know the google calendar id. 
+    #service, but does require you know the google calendar id.
     #1. *id*: the unique google assigned id for the calendar to display.
     #2. *params*: a hash of parameters that affect the display of the embedded calendar.  Accepts any parameter that the google iframe recognizes.  Here are the most common:
     #   height:: the height of the embedded calendar in pixels
@@ -354,12 +354,12 @@ module GCal4Ruby
       params[:border] ||= "0"
       params.each{|key, value| params[key] = CGI::escape(value)}
       output = "#{params.to_a.collect{|a| a.join("=")}.join("&")}"
-      
+
       output += "&src=#{id}"
-      
-      "<iframe src='#{service.create_url("www.google.com/calendar/embed?"+output)}' style='#{params[:border]} px solid;' width='#{params[:width]}' height='#{params[:height]}' frameborder='#{params[:border]}' scrolling='no'></iframe>"  
+
+      "<iframe src='#{service.create_url("www.google.com/calendar/embed?"+output)}' style='#{params[:border]} px solid;' width='#{params[:width]}' height='#{params[:height]}' frameborder='#{params[:border]}' scrolling='no'></iframe>"
     end
-    
+
     private
     def self.get_instance(service, d)
       if d.is_a? Net::HTTPOK
@@ -375,5 +375,5 @@ module GCal4Ruby
       cal.load(ele.to_s)
       cal
     end
-  end 
+  end
 end

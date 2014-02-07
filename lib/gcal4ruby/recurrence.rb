@@ -17,12 +17,12 @@
 #++
 
 class Time
-  
+
   #Returns a ISO 8601 complete formatted string of the time
   def complete
     self.utc.strftime("%Y%m%dT%H%M%S")
   end
-  
+
   def self.parse_complete(value)
     unless value.nil? || value.empty?
       if value.include?("T")
@@ -53,7 +53,7 @@ module GCal4Ruby
     attr_reader :frequency
     #True if the event is all day (i.e. no start/end time)
     attr_accessor :all_day
-    
+
     #Accepts an optional attributes hash or a string containing a properly formatted ISO 8601 recurrence rule.  Returns a new Recurrence object
     def initialize(vars = {})
       if vars.is_a? Hash
@@ -65,8 +65,8 @@ module GCal4Ruby
       end
       @all_day ||= false
     end
-    
-    #Accepts a string containing a properly formatted ISO 8601 recurrence rule and loads it into the recurrence object.  
+
+    #Accepts a string containing a properly formatted ISO 8601 recurrence rule and loads it into the recurrence object.
     #Contributed by John Paul Narowski.
     def load(rec)
       @frequency = {}
@@ -76,14 +76,14 @@ module GCal4Ruby
         key, value = val.split(":")
         if key == 'RRULE'
           args = {}
-          value.split(";").each do |rr| 
+          value.split(";").each do |rr|
             rr_key, rr_value = rr.split("=")
             rr_key = rr_key.downcase.to_sym
             unless @frequency.has_key?(rr_key)
               if rr_key == :until
                 @repeat_until = Time.parse_complete(rr_value)
               else
-                args[rr_key] = rr_value 
+                args[rr_key] = rr_value
               end
             end
           end
@@ -121,7 +121,7 @@ module GCal4Ruby
       end
       @frequency[:interval] = 1 unless @frequency[:interval] && @frequency[:interval].to_i > 0
     end
-            
+
     def to_s
       output = ''
       if @frequency
@@ -130,10 +130,10 @@ module GCal4Ruby
         by = ''
         @frequency.each do |key, v|
           key = key.to_s.downcase
-          
-          if v.is_a?(Array) 
+
+          if v.is_a?(Array)
             if v.size > 0
-              value = v.join(",") 
+              value = v.join(",")
             else
               value = nil
             end
@@ -159,13 +159,13 @@ module GCal4Ruby
           end
         end
         output += f+i+by
-      end      
+      end
       if @repeat_until
         output += " and repeats until #{@repeat_until.strftime("%m/%d/%Y")}"
       end
       output
     end
-    
+
     #Returns a string with the correctly formatted ISO 8601 recurrence rule
     def to_recurrence_string
       output = ''
@@ -186,9 +186,9 @@ module GCal4Ruby
         by = ''
         day_of_week = @frequency.delete(:day_of_week)
         @frequency.each do |key, v|
-          if v.is_a?(Array) 
+          if v.is_a?(Array)
             if v.size > 0
-              value = v.join(",") 
+              value = v.join(",")
             else
               value = nil
             end
@@ -218,13 +218,13 @@ module GCal4Ruby
           end
         end
         output += f+by+i
-      end      
+      end
       if @repeat_until
         output += "UNTIL=#{@repeat_until.strftime("%Y%m%d")}"
       end
       output += "\n"
     end
-    
+
     #Sets the start date/time.  Must be a Time object.
     def start_time=(s)
       if not s.is_a?(Time)
@@ -233,7 +233,7 @@ module GCal4Ruby
         @start_time = s
       end
     end
-    
+
     #Sets the end Date/Time. Must be a Time object.
     def end_time=(e)
       if not e.is_a?(Time)
@@ -242,7 +242,7 @@ module GCal4Ruby
         @end_time = e
       end
     end
-    
+
     #Sets the parent event reference
     def event=(e)
       if not e.is_a?(Event)
@@ -251,7 +251,7 @@ module GCal4Ruby
         @event = e
       end
     end
-    
+
     #Sets the end date for the recurrence
     def repeat_until=(r)
       if not  r.is_a?(Date)
@@ -260,8 +260,8 @@ module GCal4Ruby
         @repeat_until = r
       end
     end
-    
-    #Sets the frequency of the recurrence.  Should be a hash with one of 
+
+    #Sets the frequency of the recurrence.  Should be a hash with one of
     #"SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" as the key,
     #and as the value, an array containing zero to n of the following:
     #- *Secondly*: A value between 0 and 59.  Causes the event to repeat on that second of each minut.
@@ -294,7 +294,7 @@ module GCal4Ruby
     #
     #Repeat every other week on Friday
     #   frequency = {"Weekly" => ["FR"], "interval" => "2"}
-    
+
     def frequency=(f)
       if f.is_a?(Hash)
         @frequency = f

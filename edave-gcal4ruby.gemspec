@@ -43,4 +43,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<edave-gdata4ruby>, [">= 0.2.0"])
   end
 end
-

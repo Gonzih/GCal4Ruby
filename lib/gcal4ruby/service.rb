@@ -25,7 +25,7 @@ require 'gcal4ruby/recurrence'
 require 'rexml/document'
 
 module GCal4Ruby
-  #The service class is the main handler for all direct interactions with the 
+  #The service class is the main handler for all direct interactions with the
   #Google Calendar API.  A service represents a single user account.  Each user
   #account can have multiple calendars, so you'll need to find the calendar you
   #want from the service, using the Calendar#find class method.
@@ -43,15 +43,15 @@ module GCal4Ruby
 
     # The type of GData4Ruby service we want to use
     attr_accessor :gdata_service
-    
+
     # Convenience attribute contains the currently authenticated account name
     attr_accessor :account
-         
-    # Determines whether GCal4Ruby ensures a calendar is public.  Setting this to false can increase speeds by 
+
+    # Determines whether GCal4Ruby ensures a calendar is public.  Setting this to false can increase speeds by
     # 50% but can cause errors if you try to do something to a calendar that is not public and you don't have
     # adequate permissions
     attr_accessor :check_public
-    
+
     #Accepts an optional attributes hash for initialization values
     def initialize(attributes = {})
       # If the user has specified the type of GData4Ruby class they want, instantiate it
@@ -64,31 +64,31 @@ module GCal4Ruby
         if self.respond_to?("#{key}=")
           self.send("#{key}=", value)
         end
-      end    
+      end
       @check_public ||= true
       @account ||= "default"
       @debug ||= false
       log("Check Public: #{check_public}")
     end
-    
+
     def debug
       return @debug
     end
-    
+
     def debug=(value)
       @debug=value
       @gdata_service.debug = value
     end
-    
+
     def log(string)
       puts string if debug
     end
-    
+
     def default_event_feed
       return create_url("www.google.com/calendar/feeds/#{@account}/private/full")
     end
-  
-    # The authenticate method passes an  for the service to use to access Google's servers  
+
+    # The authenticate method passes an  for the service to use to access Google's servers
     # If authentication succeeds, returns true, otherwise raises the AuthenticationFailed error.
     def authenticate(options = {})
       if not options.has_key?(:service)
@@ -96,7 +96,7 @@ module GCal4Ruby
       end
       @gdata_service.authenticate(options)
     end
-    
+
     #Helper function to reauthenticate to a new Google service without having to re-set credentials.
     def reauthenticate(options = {})
       if not options.has_key?(:service)
@@ -104,7 +104,7 @@ module GCal4Ruby
       end
       @gdata_service.reauthenticate(options)
     end
-    
+
     # Passes a request along from a GData4Ruby GDataObject to a GData4Ruby Base (Service) to be invoked
     def send_request(request)
       if not @gdata_service.authenticated?
@@ -112,11 +112,11 @@ module GCal4Ruby
       end
       @gdata_service.send_request(request)
     end
-    
-    
-    #Returns an array of Calendar objects for each calendar associated with 
+
+
+    #Returns an array of Calendar objects for each calendar associated with
     #the authenticated account.
-    # If you want to only load some attributes, you can pass in an array of 
+    # If you want to only load some attributes, you can pass in an array of
     # string attributes via options[:fields], for example ["@gd:*", "id", "title"]
     def calendars(options = {})
       if(options[:fields])
@@ -135,7 +135,7 @@ module GCal4Ruby
       return cals
     end
 
-    
+
     #Returns an array of Event objects for each event in this account
     def events
      ret = send_request(GData4Ruby::Request.new(:get, default_event_feed, nil, {"max-results" => "10000"}))
@@ -148,12 +148,12 @@ module GCal4Ruby
       end
       return events
     end
-    
+
     # Builds a URL
     def create_url(path)
       return @gdata_service.create_url(path)
     end
-    
+
     #Helper function to return a formatted iframe embedded google calendar.  Parameters are:
     #1. *cals*: either an array of calendar ids, or <em>:all</em> for all calendars, or <em>:first</em> for the first (usally default) calendar
     #2. *params*: a hash of parameters that affect the display of the embedded calendar.  Accepts any parameter that the google iframe recognizes.  Here are the most common:
@@ -172,7 +172,7 @@ module GCal4Ruby
     #   dates:: a range of dates to display in the format of 'yyyymmdd/yyyymmdd'.  Example: 20090820/20091001
     #   privateKey:: use to display a private calendar.  You can find this key under the calendar settings pane of the Google Calendar website.
     #   ctz:: The timezone to convert event times to
-    #3. *colors*: a hash of calendar ids as key and color values as associated hash values.  Example: {'test@gmail.com' => '#7A367A'} 
+    #3. *colors*: a hash of calendar ids as key and color values as associated hash values.  Example: {'test@gmail.com' => '#7A367A'}
     def to_iframe(cals, params = {}, colors = {})
       params[:height] ||= "600"
       params[:width] ||= "600"
@@ -181,7 +181,7 @@ module GCal4Ruby
       params[:border] ||= "0"
       params.each{|key, value| params[key] = CGI::escape(value)}
       output = "#{params.to_a.collect{|a| a.join("=")}.join("&")}&"
-      
+
       if cals.is_a?(Array)
         for c in cals
           output += "src=#{c}&"
@@ -198,7 +198,7 @@ module GCal4Ruby
         cal_list = calendars()
         output += "src=#{cal_list[0].id}&"
       end
-          
+
       "<iframe src='#{create_url("www.google.com/calendar/embed?"+output)}' style='#{params[:border]} px solid;' width='#{params[:width]}' height='#{params[:height]}' frameborder='#{params[:border]}' scrolling='no'></iframe>"
     end
   end

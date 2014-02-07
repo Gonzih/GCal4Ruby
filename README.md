@@ -3,12 +3,12 @@
 ## Introduction
 GCal4Ruby is a full featured wrapper for the google calendar API.  GCal4Ruby implements
 all of the functionality available through the Google Calendar API, including permissions,
-attendees, reminders and event recurrence.  
+attendees, reminders and event recurrence.
 
 ## Author and Contact Information
-GCal4Ruby was created and is maintained by {Mike Reich}[mailto:mike@seabourneconsulting.com] 
+GCal4Ruby was created and is maintained by {Mike Reich}[mailto:mike@seabourneconsulting.com]
 and is licenses under the LGPL v3.  Feel free to use and update, but be sure to contribute your
-code back to the project and attribute as required by the license.  You can find the text of the LGPL 
+code back to the project and attribute as required by the license.  You can find the text of the LGPL
 here: http://www.gnu.org/licenses/lgpl.html.
 
 ### Website
@@ -19,7 +19,7 @@ http://cookingandcoding.com/gcal4ruby/ (original GCal4Ruby plugin)
 GCal4Ruby has three major components: the service, calendar and event objects.  Each service
 has many calendars, which in turn have many events.  Each service is the representation of a
 google account, and thus must be successfully authenticated using valid Google Calendar
-account credentials.  
+account credentials.
 
 ## Examples
 
@@ -89,7 +89,7 @@ All usages assume a successfully authenticated Service and valid Calendar.
     event.recurrence.start_time = Time.parse("06/20/2009 at 4:30 PM")
     event.recurrence.end_time = Time.parse("06/20/2009 at 6:30 PM")
     event.recurrence.frequency = {"weekly" => ["SA"]}
-    event.save 
+    event.save
 
 8. Create an event with a 15 minute email reminder
     event = Event.new(service)

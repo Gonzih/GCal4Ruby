@@ -1,7 +1,7 @@
 =CHANGELOG
 ==version 0.6.0
 * Updated Service to work with multiple types of GData4Ruby services
-==version 0.5.5 
+==version 0.5.5
 * Fixed calendar::find method.  Thanks to AB <a.berezovskiy@gmail.com>.
 * Improved recurrence handling.  Thanks to John Paul Narowski <jnarowski@gmail.com>.
 * Fixed documentation bug for event reminders.
