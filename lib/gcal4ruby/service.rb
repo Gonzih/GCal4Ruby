@@ -39,8 +39,8 @@ module GCal4Ruby
   #    calendars = service.calendars
   #
   class Service
-    @@calendar_list_feed = 'www.google.com/calendar/feeds/default/owncalendars/full'
-    
+    @@calendar_list_feed = 'www.google.com/calendar/feeds/default/allcalendars/full'
+
     # The type of GData4Ruby service we want to use
     attr_accessor :gdata_service
     
